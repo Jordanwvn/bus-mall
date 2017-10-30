@@ -14,6 +14,7 @@ which were picked.
 var previousImages = []; // array to hold the three previous images
 var currentImages = []; // array to hold the three current images
 var allImages = []; // array to hold all of the images in the catalog
+var imageList = document.getElementbyId('image-list'); // list location to hold the images
 
 
 // OBJECT CONSTRUCTOR
@@ -55,6 +56,15 @@ allImages.push( // add images to the array of image objects:
 );
 
 
+// PROTOTYPE METHODS
+
+
+//method: turn the image index array data into HTML img data
+Image.prototype.convertToImgTag = function () { // create new method convertToImgTag, which:
+  return '<img id="' + this.name + '" src="' + this.filePath + '" >' // returns the image as an img tag
+} // end convertToImgTag method
+
+
 // HELPER FUNCTIONS
 
 
@@ -93,15 +103,34 @@ var newImageSet = function () { // create function newImageSet, where:
 } // end newImageSet function
 
 
+// function: take an image index and return the proper image object
+var imageAtIndex = function (index) { // create new function imageAtIndex, where:
+  return allImages[index]; // the image object from the catalog corresponding to the index is returned
+} // end imageAtIndex function
+
+
+// function: take the values in the current image index array and turn them into HTML
+var updateImageSet = function () { // create new function updateImageSet, where:
+  imageList.innerHTML = ''; // the previous images are cleared from the HTML
+  for (var k = 0; k < 3; k++) { // for every image slot...
+    imageList.innerHTML += '<li>' + imageAtIndex(currentImages[k]).convertToImgTag() + '</li>'; // input an image tag with the correct image object
+  } // end for
+} // end updateImageSet function
+
+
 // EVENT LISTENER
 
 
-choices.addEventListener('click', choiceMade); // if an image is clicked,
+choices.addEventListener('click', resetImages); // if an image is clicked, reset the images
 
 
 // EVENT HANDLER
 
 
-function choiceMade (event) {
+function resetImages (event) {
+
   event.target.
+
+  newImageSet(); // generate the next set of images
+  updateImageSet(); // update the set of images that is shown in the DOM
 }
