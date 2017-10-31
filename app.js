@@ -12,17 +12,23 @@ which were picked.
 
 
 var previousImages = []; // array to hold the three previous images
-var currentImages = []; // array to hold the three current images
+var currentImages = [1, 2, 3]; // array to hold the three current images
 var allImages = []; // array to hold all of the images in the catalog
-var imageList = document.getElementbyId('image-list'); // list location to hold the images
-
+var imageDOM = [
+  document.getElementById('image-one'),
+  document.getElementById('image-two'),
+  document.getElementById('image-three')
+];
+// var imageOne = document.getElementById('image-one'); // list location to hold the first image
+// var imageTwo = document.getElementById('image-two'); // list location to hold the first image
+// var imageThree = document.getElementById('image-three'); // list location to hold the first image
 
 // OBJECT CONSTRUCTOR
 
 
 var Image = function (imageName, fileFormat) {
   this.name = imageName; // name describing the image
-  this.filePath = '/img/' + imageName + '.' + fileFormat; // the filepath to the image
+  this.filePath = './img/' + imageName + '.' + fileFormat; // the filepath to the image
   // this.id = document.getElementById(this.name); // the HTML class tag for this image
   this.timesShown = 0; // how many times this image was shown
   this.timesClicked = 0; // how many times this image was clicked
@@ -70,14 +76,19 @@ Image.prototype.convertToImgTag = function () { // create new method convertToIm
 
 // function: find a random number within a range
 var randBetween = function (min, max) { // create new function randBetween, where:
-  return Math.random() * (max - min) + min; // return a random number within the specified range
+  return Math.floor(Math.random() * (max - min) + min); // return a random number within the specified range
 } // end randBetween function
 
 
 // function: check if the input image number is unique to the past and current numbers
 var isUnique = function (input) { // create new function isUnique, where:
-  for (var i = 0; i < previousImages.length; i++) { // for every image that was displayed last iteration...
-    if (input === previousImages[i] || input === currentImages[i]){ // if the current input isn't unique to those...
+  for (var i = 0; i < 3; i++) { // for every image that was displayed last iteration...
+    if (input === previousImages[i]) { //|| // if the input isn't unique to the previous image, or
+      //input === currentImages[i]) { // if the current input isn't unique to the other current images...
+      console.log('unique input:',input);
+      console.log('previous image:',previousImages[i]);
+      console.log('current image:', currentImages[i]);
+      console.log('unique: false')
       return false; // return that the number is not unique
     } // end if statement
   } // end for loop
@@ -111,26 +122,54 @@ var imageAtIndex = function (index) { // create new function imageAtIndex, where
 
 // function: take the values in the current image index array and turn them into HTML
 var updateImageSet = function () { // create new function updateImageSet, where:
-  imageList.innerHTML = ''; // the previous images are cleared from the HTML
   for (var k = 0; k < 3; k++) { // for every image slot...
-    imageList.innerHTML += '<li>' + imageAtIndex(currentImages[k]).convertToImgTag() + '</li>'; // input an image tag with the correct image object
+    imageDOM[k].innerHTML = '';
+    imageDOM[k].innerHTML = imageAtIndex(currentImages[k]).convertToImgTag(); // input an image tag with the correct image object
   } // end for
 } // end updateImageSet function
 
 
+// function: says that all of the current items have been shown
+var updateShown = function () { // create a new function, where:
+  for (var l = 0; l < 3; l++) { // for every current image...
+    imageAtIndex(currentImages[l]).timesShown++; // add an instance of being shown
+  } // end for
+} // end updateShown function
+
+
 // EVENT LISTENER
 
-
-choices.addEventListener('click', resetImages); // if an image is clicked, reset the images
-
+for (var countdown = 25; countdown > 0; countdown --) {
+  imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
+  imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset the images
+  imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
+}
 
 // EVENT HANDLER
 
 
-function resetImages (event) {
+function oneClicked (event) {
+  updateShown();
+  imageAtIndex(currentImages[0]).timesClicked++;
+  newImageSet();
+  updateImageSet();
+  console.log('countdown:',countdown);
+  console.log('one:',currentImages[0]);
+  console.log('two:',currentImages[1]);
+  console.log('three:',currentImages[2]);
+}
 
-  event.target.
 
+function twoClicked (event) {
+  updateShown();
+  imageAtIndex(currentImages[1]).timesClicked++;
   newImageSet(); // generate the next set of images
-  updateImageSet(); // update the set of images that is shown in the DOM
+  updateImageSet();
+}
+
+function threeClicked (event) {
+  updateShown();
+  imageAtIndex(currentImages[2]).timesClicked++;
+  newImageSet();
+  updateImageSet();
 }

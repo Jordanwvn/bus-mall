@@ -1,0 +1,10 @@
+/*div {
+  display: block;
+  margin: 0px auto;
+}*/
+
+ul li img {
+  float: left;
+  height: 300px;
+  width: 300px;
+}
