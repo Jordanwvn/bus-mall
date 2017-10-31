@@ -133,11 +133,11 @@ var clearImages = function () { // create new function clearImages, where:
 
 
 // function: put image names, times clicked, and times shown into seperate arrays
-var putDataInArrays = function () {
-  for (var p = 0; p < allImages.length; p++){
-    objectNames.push(allImages[p].name);
-    objectShowings.push(allImages[p].timesShown);
-    objectClickings.push(allImages[p].timesClicked);
+var putDataInArrays = function () { // create new function putDataInArrays, where:
+  for (var p = 0; p < allImages.length; p++){ // for all images in the catalog...
+    objectNames.push(allImages[p].name); // push the name to an array of all names
+    objectShowings.push(allImages[p].timesShown); // push the showings to an array of all showings
+    objectClickings.push(allImages[p].timesClicked); // push the clicks to an array of all clicks
   } // end for
 } // end putDataInArrays function
 
@@ -146,6 +146,8 @@ var putDataInArrays = function () {
 
 var makeChart = function () {
   var ctx = document.getElementById('dataChart').getContext('2d');
+  ctx.canvas.width = '1000';
+  ctx.canvas.height = '250';
   var chart = new Chart(ctx, {
       // The type of chart we want to create
       type: 'bar',
