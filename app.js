@@ -137,19 +137,28 @@ var updateShown = function () { // create a new function, where:
 } // end updateShown function
 
 
-// BEGINNING STATE
+var clearImages = function () {
+  imageDOM[0].removeEventListener('click', oneClicked);
+  imageDOM[1].removeEventListener('click', twoClicked);
+  imageDOM[2].removeEventListener('click', threeClicked);
+  for (var m = 0; m < 3; m++) {
+    imageDOM[m].style.visibility = 'hidden';
+  }
+}
+
+// START STATE
 
 
-var startup = function () {
+var refresh = function () {
   updateShown();
   newImageSet();
   updateImageSet();
 }
 
-startup();
+refresh();
 
 
-// EVENT LISTENER
+// EVENT LISTENERS
 
 
 imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
@@ -157,38 +166,36 @@ imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset
 imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
 
 
-// EVENT HANDLER
+// EVENT HANDLERS
 
 
 function oneClicked (event) {
   if (countdown > 0) {
-    updateShown();
     imageAtIndex(currentImages[0]).timesClicked++;
-    newImageSet();
-    updateImageSet();
+    refresh();
     countdown--;
-    console.log('countdown:',countdown);
   } else {
-    for (var m = 0; m < 3; m++) {
-      for (var n = 0; n < 3; n++) {
-        imageDOM[n].removeEventListener('click', oneClicked);
-      }
-      imageDOM[m].style.visibility = 'hidden';
-    }
+    clearImages();
   }
 }
 
 
 function twoClicked (event) {
-  updateShown();
-  imageAtIndex(currentImages[1]).timesClicked++;
-  newImageSet(); // generate the next set of images
-  updateImageSet();
+  if (countdown > 0) {
+    imageAtIndex(currentImages[1]).timesClicked++;
+    refresh();
+    countdown--;
+  } else {
+    clearImages();
+  }
 }
 
 function threeClicked (event) {
-  updateShown();
-  imageAtIndex(currentImages[2]).timesClicked++;
-  newImageSet();
-  updateImageSet();
+  if (countdown > 0) {
+    imageAtIndex(currentImages[2]).timesClicked++;
+    refresh();
+    countdown--;
+  } else {
+    clearImages();
+  }
 }

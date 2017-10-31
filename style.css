@@ -1,7 +1,8 @@
-/*div {
+ul {
   display: block;
+  width: 1200px;
   margin: 0px auto;
-}*/
+}
 
 ul li img {
   float: left;
