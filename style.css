@@ -10,10 +10,6 @@ h1 {
   color: #017359;
 }
 
-header {
-  /*background-color: #f2f2f2;*/
-}
-
 ul {
   display: block;
   width: 1150px;
@@ -29,23 +25,4 @@ ul li img {
   border-color: #017359;
   height: 300px;
   width: 300px;
-}
-
-table {
-  display: block;
-  width: 1150px;
-  margin: 0px auto;
-  text-align: center;
-  /*margin-left: 200px;*/
-  margin-top: px;
-  color: #017359;
-}
-
-th, td {
-  margin-left: 100px;
-  margin-top: 10px;
-}
-
-th {
-  font-weight: bold;
 }
