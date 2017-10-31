@@ -15,17 +15,17 @@ var previousImages = []; // array to hold the three previous images
 var currentImages = [1, 2, 3]; // array to hold the three current images
 var allImages = []; // array to hold all of the images in the catalog
 var imageDOM = [
-  document.getElementById('image-one'),
-  document.getElementById('image-two'),
-  document.getElementById('image-three')
+  document.getElementById('image-one'), // first image
+  document.getElementById('image-two'), // second image
+  document.getElementById('image-three') // third image
 ];
-// var imageOne = document.getElementById('image-one'); // list location to hold the first image
-// var imageTwo = document.getElementById('image-two'); // list location to hold the first image
-// var imageThree = document.getElementById('image-three'); // list location to hold the first image
+var countdown = 25; // counter for how many times the process should run
+
 
 // OBJECT CONSTRUCTOR
 
 
+// constructor: create an 'image', which is linked to a stored file
 var Image = function (imageName, fileFormat) {
   this.name = imageName; // name describing the image
   this.filePath = './img/' + imageName + '.' + fileFormat; // the filepath to the image
@@ -137,26 +137,45 @@ var updateShown = function () { // create a new function, where:
 } // end updateShown function
 
 
+// BEGINNING STATE
+
+
+var startup = function () {
+  updateShown();
+  newImageSet();
+  updateImageSet();
+}
+
+startup();
+
+
 // EVENT LISTENER
 
-for (var countdown = 25; countdown > 0; countdown --) {
-  imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
-  imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset the images
-  imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
-}
+
+imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
+imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset the images
+imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
+
 
 // EVENT HANDLER
 
 
 function oneClicked (event) {
-  updateShown();
-  imageAtIndex(currentImages[0]).timesClicked++;
-  newImageSet();
-  updateImageSet();
-  console.log('countdown:',countdown);
-  console.log('one:',currentImages[0]);
-  console.log('two:',currentImages[1]);
-  console.log('three:',currentImages[2]);
+  if (countdown > 0) {
+    updateShown();
+    imageAtIndex(currentImages[0]).timesClicked++;
+    newImageSet();
+    updateImageSet();
+    countdown--;
+    console.log('countdown:',countdown);
+  } else {
+    for (var m = 0; m < 3; m++) {
+      for (var n = 0; n < 3; n++) {
+        imageDOM[n].removeEventListener('click', oneClicked);
+      }
+      imageDOM[m].style.visibility = 'hidden';
+    }
+  }
 }
 
 
