@@ -82,24 +82,32 @@ var randBetween = function (min, max) { // create new function randBetween, wher
 
 // function: check if the input image number is unique to the past and current numbers
 var isUnique = function (input) { // create new function isUnique, where:
-  for (var i = 0; i < 3; i++) { // for every image that was displayed last iteration...
-    if (input === previousImages[i]) { //|| // if the input isn't unique to the previous image, or
-      //input === currentImages[i]) { // if the current input isn't unique to the other current images...
-      console.log('unique input:',input);
-      console.log('previous image:',previousImages[i]);
-      console.log('current image:', currentImages[i]);
-      console.log('unique: false')
-      return false; // return that the number is not unique
-    } // end if statement
-  } // end for loop
+  if  (input === previousImages[0] ||
+    input === previousImages[1] ||
+    input === previousImages[2] ||
+    input === currentImages[0] ||
+    input === currentImages[1] ||
+    input === currentImages[2]
+  ) {
+    return false;
+  } else {
+  // for (var i = 0; i < 3; i++) { // for every image that was displayed last iteration...
+  //   if (input === previousImages[i] || // if the input isn't unique to the previous image, or
+  //     input === currentImages[i]) { // if the current input isn't unique to the other current images...
+  //     return false; // return that the number is not unique
+  //   } // end if statement
+  // } // end for loop
+  console.log('unique: true');
   return true; // if the number passes all testing, return that the number is unique
 } // end compareItems function
+}
 
 
 // function: if the number isn't already unique, make sure it is
 var makeUnique = function (number) { // create new function makeUnique, where:
   while (isUnique(number) === false) { // as long as the input number is not unique
     number = randBetween(0, allImages.length - 1); // keep changing that number
+    console.log('number:',number);
   } // end while loop
 } // end makeUnique function
 
