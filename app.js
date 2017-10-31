@@ -11,8 +11,8 @@ which were picked.
 // VARIABLE DECLARATIONS
 
 
-var previousImages = []; // array to hold the three previous images
-var currentImages = [1, 2, 3]; // array to hold the three current images
+var previousImages = [1, 2, 3]; // array to hold the three previous images
+var currentImages = [4, 5, 6]; // array to hold the three current images
 var allImages = []; // array to hold all of the images in the catalog
 var imageDOM = [
   document.getElementById('image-one'), // first image
@@ -30,6 +30,7 @@ var Image = function (imageName, fileFormat) {
   this.name = imageName; // name describing the image
   this.filePath = './img/' + imageName + '.' + fileFormat; // the filepath to the image
   // this.id = document.getElementById(this.name); // the HTML class tag for this image
+  this.valid = true; // is the image viable to use currently?
   this.timesShown = 0; // how many times this image was shown
   this.timesClicked = 0; // how many times this image was clicked
 }
@@ -75,49 +76,26 @@ Image.prototype.convertToImgTag = function () { // create new method convertToIm
 
 
 // function: find a random number within a range
-var randBetween = function (min, max) { // create new function randBetween, where:
+var randBetween = function () { // create new function randBetween, where:
+  var max = allImages.length;
+  var min = 0;
   return Math.floor(Math.random() * (max - min) + min); // return a random number within the specified range
 } // end randBetween function
 
 
-// function: check if the input image number is unique to the past and current numbers
-var isUnique = function (input) { // create new function isUnique, where:
-  if  (input === previousImages[0] ||
-    input === previousImages[1] ||
-    input === previousImages[2] ||
-    input === currentImages[0] ||
-    input === currentImages[1] ||
-    input === currentImages[2]
-  ) {
-    return false;
-  } else {
-  // for (var i = 0; i < 3; i++) { // for every image that was displayed last iteration...
-  //   if (input === previousImages[i] || // if the input isn't unique to the previous image, or
-  //     input === currentImages[i]) { // if the current input isn't unique to the other current images...
-  //     return false; // return that the number is not unique
-  //   } // end if statement
-  // } // end for loop
-  console.log('unique: true');
-  return true; // if the number passes all testing, return that the number is unique
-} // end compareItems function
-}
-
-
-// function: if the number isn't already unique, make sure it is
-var makeUnique = function (number) { // create new function makeUnique, where:
-  while (isUnique(number) === false) { // as long as the input number is not unique
-    number = randBetween(0, allImages.length - 1); // keep changing that number
-    console.log('number:',number);
-  } // end while loop
-} // end makeUnique function
-
-
 // function: shift forwards with a totally new set of images
-var newImageSet = function () { // create function newImageSet, where:
+var updateImages = function () { // create function newImageSet, where:
   for (var j = 0; j < 3; j++){ // for every current image index...
+    imageAtIndex(previousImages[j]).valid = true;
+    console.log('previous:',imageAtIndex(previousImages[j]).name);
+    console.log('previous:',imageAtIndex(previousImages[j]).valid);
     previousImages[j] = currentImages[j]; // change that image index to a 'previous image' index
-    currentImages[j] = randBetween(0, allImages.length - 1); // replace it with a new random image index
-    makeUnique(currentImages[j]); // make sure that new image is unique to predecesors and partners
+    console.log('new previous:',imageAtIndex(previousImages[j]).name);
+    console.log('new previous:',imageAtIndex(previousImages[j]).valid);
+    while (imageAtIndex(currentImages[j]).valid === false) {
+      currentImages[j] = randBetween();
+    }
+    imageAtIndex(currentImages[j]).valid = false;
   } // end for loop
 } // end newImageSet function
 
@@ -129,7 +107,7 @@ var imageAtIndex = function (index) { // create new function imageAtIndex, where
 
 
 // function: take the values in the current image index array and turn them into HTML
-var updateImageSet = function () { // create new function updateImageSet, where:
+var updatePage = function () { // create new function updateImageSet, where:
   for (var k = 0; k < 3; k++) { // for every image slot...
     imageDOM[k].innerHTML = '';
     imageDOM[k].innerHTML = imageAtIndex(currentImages[k]).convertToImgTag(); // input an image tag with the correct image object
@@ -141,6 +119,7 @@ var updateImageSet = function () { // create new function updateImageSet, where:
 var updateShown = function () { // create a new function, where:
   for (var l = 0; l < 3; l++) { // for every current image...
     imageAtIndex(currentImages[l]).timesShown++; // add an instance of being shown
+    imageAtIndex(currentImages[l]).valid = false;
   } // end for
 } // end updateShown function
 
@@ -159,8 +138,8 @@ var clearImages = function () {
 
 var refresh = function () {
   updateShown();
-  newImageSet();
-  updateImageSet();
+  updateImages();
+  updatePage();
 }
 
 refresh();
@@ -180,6 +159,7 @@ imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, res
 function oneClicked (event) {
   if (countdown > 0) {
     imageAtIndex(currentImages[0]).timesClicked++;
+
     refresh();
     countdown--;
   } else {
