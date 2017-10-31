@@ -1,0 +1,51 @@
+h1 {
+  font-family: "Monoton";
+  text-transform: capitalize;
+  text-align: center;
+  font-size: 75px;
+  background-color: #f2f2f2;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  color: #017359;
+}
+
+header {
+  /*background-color: #f2f2f2;*/
+}
+
+ul {
+  display: block;
+  width: 1150px;
+  margin: 0px auto;
+}
+
+ul li img {
+  float: left;
+  margin-left: 50px;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 25px;
+  border-color: #017359;
+  height: 300px;
+  width: 300px;
+}
+
+table {
+  display: block;
+  width: 1150px;
+  margin: 0px auto;
+  text-align: center;
+  /*margin-left: 200px;*/
+  margin-top: px;
+  color: #017359;
+}
+
+th, td {
+  margin-left: 100px;
+  margin-top: 10px;
+}
+
+th {
+  font-weight: bold;
+}
