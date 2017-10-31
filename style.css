@@ -30,22 +30,3 @@ ul li img {
   height: 300px;
   width: 300px;
 }
-
-table {
-  display: block;
-  width: 1150px;
-  margin: 0px auto;
-  text-align: center;
-  /*margin-left: 200px;*/
-  margin-top: px;
-  color: #017359;
-}
-
-th, td {
-  margin-left: 100px;
-  margin-top: 10px;
-}
-
-th {
-  font-weight: bold;
-}

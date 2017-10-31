@@ -19,10 +19,12 @@ var imageDOM = [
   document.getElementById('center-image'), // second image
   document.getElementById('right-image') // third image
 ];
+
 var countdown = 25; // counter for how many times the process should run
 
-var header = document.getElementById('table-header');
-var body = document.getElementById('table-body');
+var objectNames = []; // array to hold all names of images
+var objectShowings = []; // array to hold all of the 'timesShown' data
+var objectClickings = []; // array to hold all of the 'timesClicked' data
 
 
 /***** OBJECT CONSTRUCTOR *****/
@@ -130,46 +132,54 @@ var clearImages = function () { // create new function clearImages, where:
 } // end clearImages function
 
 
-// function: make a table cell
-var makeCell = function (input, parent, type) { // make function makeCell, where:
-  var cell = document.createElement(type); // create the empty table element
-  cell.innerHTML = input; // fill the cell with the input
-  parent.appendChild(cell); // append the cell
-} // end makeCell function
-
-
-// function: find the percentage of clicks per views
-var findPercentage = function (imageObject) { // create new function findPercentage, where:
-  if(imageObject.timesShown === 0) { // if the image was never shown
-    return '0%'; // return 0%
-  } else { // otherwise
-  var percent = Math.floor((imageObject.timesClicked / imageObject.timesShown) * 100) // divide the times clicked by the times seen, and multiply that product by 100
-  return percent + '%'; // return that number with a percent sign
-  } // end else
-} // end findPercentage function
-
-
-// function: create a table using the collected data
-var makeTable = function () { // create a new function makeTable:
-
-  // make the header of the table
-  var headerRow = document.createElement('tr'); // create a header row
-  makeCell('Image', header, 'th'); // make a title 'Image'
-  makeCell('Times Seen', header, 'th'); // make a title cell 'Times Seen'
-  makeCell('Times Clicked', header, 'th'); // make a title cell 'Times Clicked'
-  makeCell('Clicks per Views', header, 'th'); // make a title cell 'Clicks per views'
-  header.appendChild(headerRow); // apend the header row
-
-  // make the body of the table
-  for (var o = 0; o < allImages.length; o++) { // for every image
-    var tableRow = document.createElement('tr'); // make a new table row
-    makeCell(allImages[o].name, body, 'th'); // make a cell with the image name
-    makeCell(allImages[o].timesShown, body, 'td'); // make a cell with the times shown
-    makeCell(allImages[o].timesClicked, body, 'td'); // make a cell with the times clicked
-    makeCell(findPercentage(allImages[o]), body, 'td'); // make a cell with the percentage clicked
-    body.appendChild(tableRow); // apend the table row
+// function: put image names, times clicked, and times shown into seperate arrays
+var putDataInArrays = function () {
+  for (var p = 0; p < allImages.length; p++){
+    objectNames.push(allImages[p].name);
+    objectShowings.push(allImages[p].timesShown);
+    objectClickings.push(allImages[p].timesClicked);
   } // end for
-} // end makeTable function
+} // end putDataInArrays function
+
+
+/***** MAKE CHART *****/
+
+var makeChart = function () {
+  var ctx = document.getElementById('dataChart').getContext('2d');
+  var chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'bar',
+
+      // The data for our dataset
+      data: {
+          labels: objectNames,
+          datasets: [{
+              label: "Times Seen",
+              backgroundColor: '#f2f2f2',
+              borderColor: '#000',
+              data: objectShowings,
+          },
+          {
+            label: "Times Clicked",
+            backgroundColor: '#017359',
+            borderColor: '#000',
+            data: objectClickings,
+          }]
+      },
+
+      // Configuration options go here
+      options: {
+        scales: {
+            xAxes: [{
+                stacked: true
+            }],
+            yAxes: [{
+                stacked: true
+            }]
+        } // end scales
+    } // end options
+  });
+} // end makeChart function
 
 
 /***** START STATE *****/
@@ -204,7 +214,8 @@ function oneClicked (event) { // create new function oneClicked, where:
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
-    makeTable(); // make a table using the logged data
+    putDataInArrays(); // push object data into arrays for chart usage
+    makeChart(); // create a chart using the previously collected data
   } // end if else
 } // end oneClicked function
 
@@ -217,7 +228,8 @@ function twoClicked (event) { // create new function oneClicked, where:
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
-    makeTable(); // make a table using the logged data
+    putDataInArrays(); // push object data into arrays for chart usage
+    makeChart(); // create a chart using the previously collected data
   } // end if else
 } // end twoClicked function
 
@@ -230,6 +242,7 @@ function threeClicked (event) { // create new function oneClicked, where:
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
-    makeTable(); // make a table using the logged data
+    putDataInArrays(); // push object data into arrays for chart usage
+    makeChart(); // create a chart using the previously collected data
   } // end if else
 } // end threeClicked function
