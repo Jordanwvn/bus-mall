@@ -21,6 +21,9 @@ var imageDOM = [
 ];
 var countdown = 25; // counter for how many times the process should run
 
+var header = document.getElementById('table-header');
+var body = document.getElementById('table-body');
+
 
 // OBJECT CONSTRUCTOR
 
@@ -29,7 +32,6 @@ var countdown = 25; // counter for how many times the process should run
 var Image = function (imageName, fileFormat) {
   this.name = imageName; // name describing the image
   this.filePath = './img/' + imageName + '.' + fileFormat; // the filepath to the image
-  // this.id = document.getElementById(this.name); // the HTML class tag for this image
   this.valid = true; // is the image viable to use currently?
   this.timesShown = 0; // how many times this image was shown
   this.timesClicked = 0; // how many times this image was clicked
@@ -76,10 +78,10 @@ Image.prototype.convertToImgTag = function () { // create new method convertToIm
 
 
 // function: find a random number within a range
-var randBetween = function () { // create new function randBetween, where:
-  var max = allImages.length;
-  var min = 0;
-  return Math.floor(Math.random() * (max - min) + min); // return a random number within the specified range
+var randomIndex = function () { // create new function randBetween, where:
+  // var max = allImages.length;
+  // var min = 0;
+  return Math.floor(Math.random() * allImages.length); // return a random number within the specified range
 } // end randBetween function
 
 
@@ -93,7 +95,7 @@ var updateImages = function () { // create function newImageSet, where:
     console.log('new previous:',imageAtIndex(previousImages[j]).name);
     console.log('new previous:',imageAtIndex(previousImages[j]).valid);
     while (imageAtIndex(currentImages[j]).valid === false) {
-      currentImages[j] = randBetween();
+      currentImages[j] = randomIndex();
     }
     imageAtIndex(currentImages[j]).valid = false;
   } // end for loop
@@ -133,6 +135,41 @@ var clearImages = function () {
   }
 }
 
+var makeCell = function (input, parent, type) {
+  var cell = document.createElement(type);
+  cell.innerHTML = input;
+  parent.appendChild(cell);
+}
+
+
+var findPercentage = function (imageObject) {
+  if(imageObject.timesClicked === 0 && imageObject.timesShown === 0) {
+    return '0%';
+  } else {
+  var percent = Math.floor((imageObject.timesClicked / imageObject.timesShown) * 100)
+  return percent + '%';
+  }
+}
+
+
+var makeTable = function () {
+  var headerRow = document.createElement('tr');
+  makeCell('Image', header, 'th');
+  makeCell('Times Seen', header, 'th');
+  makeCell('Times Clicked', header, 'th');
+  makeCell('Clicks per Views', header, 'th');
+  header.appendChild(headerRow);
+  for (var o = 0; o < allImages.length; o++) {
+    var tableRow = document.createElement('tr');
+    var percentage = findPercentage(allImages[o]);
+    makeCell(allImages[o].name, body, 'th');
+    makeCell(allImages[o].timesShown, body, 'td');
+    makeCell(allImages[o].timesClicked, body, 'td');
+    makeCell(percentage, body, 'td');
+    body.appendChild(tableRow);
+  }
+}
+
 // START STATE
 
 
@@ -164,6 +201,7 @@ function oneClicked (event) {
     countdown--;
   } else {
     clearImages();
+    makeTable();
   }
 }
 
@@ -175,6 +213,7 @@ function twoClicked (event) {
     countdown--;
   } else {
     clearImages();
+    makeTable();
   }
 }
 
@@ -185,5 +224,6 @@ function threeClicked (event) {
     countdown--;
   } else {
     clearImages();
+    makeTable();
   }
 }
