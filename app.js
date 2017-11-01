@@ -142,27 +142,35 @@ var putDataInArrays = function () { // create new function putDataInArrays, wher
 } // end putDataInArrays function
 
 
+// function: refresh the page by updating image information and then showing the current information
+var refresh = function () { // create new function refresh, where:
+  updateShown(); // update which images have been shown
+  updateImages(); // update which images are queued to show
+  updatePage(); // update which images are shown
+} // end refresh function
+
+
 /***** LOCAL STORAGE *****/
 
 
 // function: save object counting data into local storage
-var saveData () { // create new function saveData, where:
+var saveProgress = function () { // create new function saveProgress, where:
   localStorage.savedCountdown = countdown; // save the countdown value
   for (var saveSlot = 0; saveSlot < allImages.length; saveSlot++) { // for every image object...
     localStorage['image showings for image #' + saveSlot] = imageAtIndex(saveSlot).timesShown; // save the showings of the indexed object
     localStorage['image clickings for image #' + saveSlot] = imageAtIndex(saveSlot).timesClicked; // save the clickings of the indexed object
   } // end for
-} // end saveData object
+} // end saveProgress object
 
 
 // function: load oject counting data from local storage
-var loadData () { // create new function loadData, where:
+var loadProgress = function () { // create new function loadProgress, where:
   countdown = localStorage.savedCountdown; // set countdown to the stored value
   for (var loadSlot = 0; loadSlot < allImages.length; loadSlot++) { // for every image object...
-    imagesAtIndex(loadSlot).timesShown = parseInt(localStorage['image showings for image #' + loadSlot]); // load the saved showings into the indexed object
-    imagesAtIndex(loadSlot).timesClicked = parseInt(localStorage['image clickings for image #' + loadSlot]); // load the saved clickings into the indexed object
+    imageAtIndex(loadSlot).timesShown = parseInt(localStorage['image showings for image #' + loadSlot]); // load the saved showings into the indexed object
+    imageAtIndex(loadSlot).timesClicked = parseInt(localStorage['image clickings for image #' + loadSlot]); // load the saved clickings into the indexed object
   } // end for
-} // end loadData function
+} // end loadProgress function
 
 
 /***** MAKE CHART *****/
@@ -211,14 +219,14 @@ var makeChart = function () {
 /***** START STATE *****/
 
 
-// function: refresh the page by updating image information and then showing the current information
-var refresh = function () { // create new function refresh, where:
-  updateShown(); // update which images have been shown
-  updateImages(); // update which images are queued to show
-  updatePage(); // update which images are shown
-} // end refresh function
+var startUp () {
+  refresh(); // bring out the first set of images
+  if(localStorage.savedCountdown) { // if the locally stored data exists...
+    loadProgress(); // load the locally stored data
+  } // end if
+} // end startUp function
 
-refresh(); // bring out the first set of images
+startUp();
 
 
 /***** EVENT LISTENERS *****/
@@ -237,9 +245,11 @@ function oneClicked (event) { // create new function oneClicked, where:
   if (countdown > 0) { // if there are still turns left in the countdown...
     imageAtIndex(currentImages[0]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
+    saveProgress(); // saves the state of data
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
+    localStorage.clear();
     putDataInArrays(); // push object data into arrays for chart usage
     makeChart(); // create a chart using the previously collected data
   } // end if else
@@ -251,6 +261,7 @@ function twoClicked (event) { // create new function oneClicked, where:
   if (countdown > 0) { // if there are still turns left in the countdown...
     imageAtIndex(currentImages[1]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
+    saveProgress(); // saves the state of data
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
@@ -265,6 +276,7 @@ function threeClicked (event) { // create new function oneClicked, where:
   if (countdown > 0) { // if there are still turns left in the countdown...
     imageAtIndex(currentImages[2]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
+    saveProgress(); // saves the state of data
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
