@@ -142,7 +142,31 @@ var putDataInArrays = function () { // create new function putDataInArrays, wher
 } // end putDataInArrays function
 
 
+/***** LOCAL STORAGE *****/
+
+
+// function: save object counting data into local storage
+var saveData () { // create new function saveData, where:
+  localStorage.savedCountdown = countdown; // save the countdown value
+  for (var saveSlot = 0; saveSlot < allImages.length; saveSlot++) { // for every image object...
+    localStorage['image showings for image #' + saveSlot] = imageAtIndex(saveSlot).timesShown; // save the showings of the indexed object
+    localStorage['image clickings for image #' + saveSlot] = imageAtIndex(saveSlot).timesClicked; // save the clickings of the indexed object
+  } // end for
+} // end saveData object
+
+
+// function: load oject counting data from local storage
+var loadData () { // create new function loadData, where:
+  countdown = localStorage.savedCountdown; // set countdown to the stored value
+  for (var loadSlot = 0; loadSlot < allImages.length; loadSlot++) { // for every image object...
+    imagesAtIndex(loadSlot).timesShown = parseInt(localStorage['image showings for image #' + loadSlot]); // load the saved showings into the indexed object
+    imagesAtIndex(loadSlot).timesClicked = parseInt(localStorage['image clickings for image #' + loadSlot]); // load the saved clickings into the indexed object
+  } // end for
+} // end loadData function
+
+
 /***** MAKE CHART *****/
+
 
 var makeChart = function () {
   var ctx = document.getElementById('dataChart').getContext('2d');
