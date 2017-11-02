@@ -37,6 +37,7 @@ var objectClickings = []; // array to hold all of the 'timesClicked' data
 
 /***** OBJECT CONSTRUCTOR *****/
 
+
 // constructor: create an 'image', which is linked to a stored file
 var Image = function (imageName, fileFormat) {
   this.name = imageName; // name describing the image
@@ -134,20 +135,15 @@ var clearImages = function () { // create new function clearImages, where:
   imageDOM[0].removeEventListener('click', oneClicked); // the event listeners are removed
   imageDOM[1].removeEventListener('click', twoClicked); // ...
   imageDOM[2].removeEventListener('click', threeClicked); // ...
-  // for (var m = 0; m < imageDOM.length; m++) { // for every item in imageDOM...
-  //   imageDOM[m].style.visibility = 'hidden'; // hide the image
-  // } // end for
 } // end clearImages function
 
 
 // function: put image names, times clicked, and times shown into seperate arrays
 var putDataInArrays = function () { // create new function putDataInArrays, where:
   for (var p = 0; p < allImages.length; p++){ // for all images in the catalog...
-    objectNames.push(allImages[p].name); // push the name to an array of all names
+    objectNames[p] = localStorage['name for image #' + p];
     objectShowings[p] = parseInt(localStorage['image showings for image #' + p]);
     objectClickings[p] = parseInt(localStorage['image clickings for image #' + p]);
-    // objectShowings.push(allImages[p].timesShown); // push the showings to an array of all showings
-    // objectClickings.push(allImages[p].timesClicked); // push the clicks to an array of all clicks
   } // end for
 } // end putDataInArrays function
 
@@ -167,6 +163,7 @@ var refresh = function () { // create new function refresh, where:
 var saveProgress = function () { // create new function saveProgress, where:
   localStorage.savedCountdown = countdown; // save the countdown value
   for (var saveSlot = 0; saveSlot < allImages.length; saveSlot++) { // for every image object...
+    localStorage['name for image #' + saveSlot] = imageAtIndex(saveSlot).name;
     localStorage['image showings for image #' + saveSlot] = imageAtIndex(saveSlot).timesShown; // save the showings of the indexed object
     localStorage['image clickings for image #' + saveSlot] = imageAtIndex(saveSlot).timesClicked; // save the clickings of the indexed object
   } // end for
@@ -177,28 +174,11 @@ var saveProgress = function () { // create new function saveProgress, where:
 var loadProgress = function () { // create new function loadProgress, where:
   countdown = parseInt(localStorage.savedCountdown); // set countdown to the stored value
   for (var loadSlot = 0; loadSlot < allImages.length; loadSlot++) { // for every image object...
+    imageAtIndex(loadSlot).name = localStorage['name for image #' + loadSlot];
     imageAtIndex(loadSlot).timesShown = parseInt(localStorage['image showings for image #' + loadSlot]); // load the saved showings into the indexed object
     imageAtIndex(loadSlot).timesClicked = parseInt(localStorage['image clickings for image #' + loadSlot]); // load the saved clickings into the indexed object
   } // end for
 } // end loadProgress function
-
-
-// // function: save the data to be shown in the chart
-// var saveResults = function () { // create new function saveResults, where:
-//   for (var saveSlot = 0; saveSlot < allImages.length; saveSlot++){ // for every image stored
-//     localStorage['final showings for image #' + saveSlot] = objectShowings[saveSlot]; // save all data for showings
-//     localStorage['final clickings for image #' + saveSlot] = objectClickings[saveSlot]; // save all data for clickings
-//   } // end for
-// } // end saveResults function
-//
-//
-// // function: load the data to be shown in the chart
-// var loadResults = function () { // create new function loadResults, where:
-//   for (var loadSlot = 0; loadSlot < allImages.length; loadSlot++){ // for every image stored
-//     objectShowings[loadSlot] = localStorage['final showings for image #' + loadSlot]; // load all data for showings
-//     objectClickings[loadSlot] = localStorage['final clickings for image #' + loadSlot]; // load all data for clickings
-//   } // end for
-// } // end loadResults function
 
 
 /***** MAKE CHART *****/
@@ -241,6 +221,7 @@ var makeChart = function () {
         } // end scales
     } // end options
   });
+  localStorage.firstTime = false;
 } // end makeChart function
 
 
@@ -281,11 +262,9 @@ function oneClicked (event) { // create new function oneClicked, where:
     imageAtIndex(currentImages[0]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
     saveProgress(); // saves the state of data
-    console.log('countdown:', countdown);
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
-    // localStorage.clear();
     putDataInArrays(); // push object data into arrays for chart usage
     makeChart(); // create a chart using the previously collected data
   } // end if else
@@ -330,12 +309,4 @@ function resetClick (event) {
   imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
   imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset the images
   imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
-  console.log('reset');
-  // var ctx = document.getElementById('dataChart').getContext('2d');
-  // ctx.canvas.width = '0';
-  // ctx.canvas.height = '0';
-
-  // for (var m = 0; m < imageDOM.length; m++) { // for every item in imageDOM...
-  //   imageDOM[m].style.visibility = 'visible'; // show the image
-  // } // end for
 }
