@@ -11,17 +11,25 @@ which were picked.
 /*****  VARIABLE DECLARATIONS *****/
 
 
+// image indexes
 var previousImages = [1, 2, 3]; // array to hold the three previous images
 var currentImages = [4, 5, 6]; // array to hold the three current images
+
+// object array
 var allImages = []; // array to hold all of the images in the catalog
+
+// DOM references
 var imageDOM = [
   document.getElementById('left-image'), // first image
   document.getElementById('center-image'), // second image
   document.getElementById('right-image') // third image
 ];
+var reset = document.getElementById('reset-button'); // button to reset quiz
 
+// counter
 var countdown = 25; // counter for how many times the process should run
 
+// arrays for data from all objects
 var objectNames = []; // array to hold all names of images
 var objectShowings = []; // array to hold all of the 'timesShown' data
 var objectClickings = []; // array to hold all of the 'timesClicked' data
@@ -126,9 +134,9 @@ var clearImages = function () { // create new function clearImages, where:
   imageDOM[0].removeEventListener('click', oneClicked); // the event listeners are removed
   imageDOM[1].removeEventListener('click', twoClicked); // ...
   imageDOM[2].removeEventListener('click', threeClicked); // ...
-  for (var m = 0; m < imageDOM.length; m++) { // for every item in imageDOM...
-    imageDOM[m].style.visibility = 'hidden'; // hide the image
-  } // end for
+  // for (var m = 0; m < imageDOM.length; m++) { // for every item in imageDOM...
+  //   imageDOM[m].style.visibility = 'hidden'; // hide the image
+  // } // end for
 } // end clearImages function
 
 
@@ -136,13 +144,65 @@ var clearImages = function () { // create new function clearImages, where:
 var putDataInArrays = function () { // create new function putDataInArrays, where:
   for (var p = 0; p < allImages.length; p++){ // for all images in the catalog...
     objectNames.push(allImages[p].name); // push the name to an array of all names
-    objectShowings.push(allImages[p].timesShown); // push the showings to an array of all showings
-    objectClickings.push(allImages[p].timesClicked); // push the clicks to an array of all clicks
+    objectShowings[p] = parseInt(localStorage['image showings for image #' + p]);
+    objectClickings[p] = parseInt(localStorage['image clickings for image #' + p]);
+    // objectShowings.push(allImages[p].timesShown); // push the showings to an array of all showings
+    // objectClickings.push(allImages[p].timesClicked); // push the clicks to an array of all clicks
   } // end for
 } // end putDataInArrays function
 
 
+// function: refresh the page by updating image information and then showing the current information
+var refresh = function () { // create new function refresh, where:
+  updateShown(); // update which images have been shown
+  updateImages(); // update which images are queued to show
+  updatePage(); // update which images are shown
+} // end refresh function
+
+
+/***** LOCAL STORAGE *****/
+
+
+// function: save object counting data into local storage
+var saveProgress = function () { // create new function saveProgress, where:
+  localStorage.savedCountdown = countdown; // save the countdown value
+  for (var saveSlot = 0; saveSlot < allImages.length; saveSlot++) { // for every image object...
+    localStorage['image showings for image #' + saveSlot] = imageAtIndex(saveSlot).timesShown; // save the showings of the indexed object
+    localStorage['image clickings for image #' + saveSlot] = imageAtIndex(saveSlot).timesClicked; // save the clickings of the indexed object
+  } // end for
+} // end saveProgress object
+
+
+// function: load oject counting data from local storage
+var loadProgress = function () { // create new function loadProgress, where:
+  countdown = parseInt(localStorage.savedCountdown); // set countdown to the stored value
+  for (var loadSlot = 0; loadSlot < allImages.length; loadSlot++) { // for every image object...
+    imageAtIndex(loadSlot).timesShown = parseInt(localStorage['image showings for image #' + loadSlot]); // load the saved showings into the indexed object
+    imageAtIndex(loadSlot).timesClicked = parseInt(localStorage['image clickings for image #' + loadSlot]); // load the saved clickings into the indexed object
+  } // end for
+} // end loadProgress function
+
+
+// // function: save the data to be shown in the chart
+// var saveResults = function () { // create new function saveResults, where:
+//   for (var saveSlot = 0; saveSlot < allImages.length; saveSlot++){ // for every image stored
+//     localStorage['final showings for image #' + saveSlot] = objectShowings[saveSlot]; // save all data for showings
+//     localStorage['final clickings for image #' + saveSlot] = objectClickings[saveSlot]; // save all data for clickings
+//   } // end for
+// } // end saveResults function
+//
+//
+// // function: load the data to be shown in the chart
+// var loadResults = function () { // create new function loadResults, where:
+//   for (var loadSlot = 0; loadSlot < allImages.length; loadSlot++){ // for every image stored
+//     objectShowings[loadSlot] = localStorage['final showings for image #' + loadSlot]; // load all data for showings
+//     objectClickings[loadSlot] = localStorage['final clickings for image #' + loadSlot]; // load all data for clickings
+//   } // end for
+// } // end loadResults function
+
+
 /***** MAKE CHART *****/
+
 
 var makeChart = function () {
   var ctx = document.getElementById('dataChart').getContext('2d');
@@ -187,14 +247,20 @@ var makeChart = function () {
 /***** START STATE *****/
 
 
-// function: refresh the page by updating image information and then showing the current information
-var refresh = function () { // create new function refresh, where:
-  updateShown(); // update which images have been shown
-  updateImages(); // update which images are queued to show
-  updatePage(); // update which images are shown
-} // end refresh function
+var startUp = function () {
+  // if (parseInt(localStorage.savedCountdown) === 1) { // if the countdown is zero and that's because the local storage has it indexed as such...
+  //   loadResults(); // load the data for the chart from local storage
+  //   clearImages(); // make sure the images are hidden
+  //   makeChart(); // create the chart
+  // } else { // otherwise, if there's still
+    refresh(); // bring out the first set of images
+    if (localStorage.savedCountdown) { // if the locally stored data exists...
+      loadProgress(); // load the locally stored data
+      // } // end if
+  } // end else
+} // end startUp function
 
-refresh(); // bring out the first set of images
+startUp();
 
 
 /***** EVENT LISTENERS *****/
@@ -203,6 +269,7 @@ refresh(); // bring out the first set of images
 imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
 imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset the images
 imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
+reset.addEventListener('click', resetClick); // if the button is clicked, reset everything
 
 
 /***** EVENT HANDLERS *****/
@@ -213,9 +280,12 @@ function oneClicked (event) { // create new function oneClicked, where:
   if (countdown > 0) { // if there are still turns left in the countdown...
     imageAtIndex(currentImages[0]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
+    saveProgress(); // saves the state of data
+    console.log('countdown:', countdown);
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
+    // localStorage.clear();
     putDataInArrays(); // push object data into arrays for chart usage
     makeChart(); // create a chart using the previously collected data
   } // end if else
@@ -227,6 +297,7 @@ function twoClicked (event) { // create new function oneClicked, where:
   if (countdown > 0) { // if there are still turns left in the countdown...
     imageAtIndex(currentImages[1]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
+    saveProgress(); // saves the state of data
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
@@ -241,6 +312,7 @@ function threeClicked (event) { // create new function oneClicked, where:
   if (countdown > 0) { // if there are still turns left in the countdown...
     imageAtIndex(currentImages[2]).timesClicked++; // add a click to the clicked image
     refresh(); // reset the page with new information
+    saveProgress(); // saves the state of data
     countdown--; // count down on the countdown
   } else { // otherwise, if the countdown is finished
     clearImages(); // make the images invisible
@@ -248,3 +320,22 @@ function threeClicked (event) { // create new function oneClicked, where:
     makeChart(); // create a chart using the previously collected data
   } // end if else
 } // end threeClicked function
+
+
+// function: if the button is clicked, reset everything
+function resetClick (event) {
+  startUp();
+  countdown = 25;
+  localStorage.savedCountdown = countdown;
+  imageDOM[0].addEventListener('click', oneClicked); // if image is clicked, reset the images
+  imageDOM[1].addEventListener('click', twoClicked); // if image is clicked, reset the images
+  imageDOM[2].addEventListener('click', threeClicked); // if image is clicked, reset the images
+  console.log('reset');
+  // var ctx = document.getElementById('dataChart').getContext('2d');
+  // ctx.canvas.width = '0';
+  // ctx.canvas.height = '0';
+
+  // for (var m = 0; m < imageDOM.length; m++) { // for every item in imageDOM...
+  //   imageDOM[m].style.visibility = 'visible'; // show the image
+  // } // end for
+}
