@@ -26,3 +26,18 @@ ul li img {
   height: 300px;
   width: 300px;
 }
+
+#reset-button {
+  position: relative;
+  margin: 0 auto;
+  background-color: #017359;
+  border: none;
+  color: white;
+  padding: 0px 32px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  display: inline-block;
+  font-family: "Monoton";
+  font-size: 38px;
+}
